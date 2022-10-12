@@ -23,7 +23,7 @@ import Block from "./Block.vue";
     Block,
   },
 })
-export default class Test extends Vue {
+export default class BlockRegion extends Vue {
   private blockList: BlockModel[] = [];
   private imgMap = [
     require("@/assets/images/block-0.jpg"),
@@ -87,16 +87,14 @@ export default class Test extends Vue {
           block.y = this.getTop(row, startTop);
           block.rowIndex = row;
           block.colIndex = col;
-          block.type = imgIndexList[count++];
-          block.src = this.imgMap[block.type];
+          // block.type = imgIndexList[count++];
+          // block.src = this.imgMap[block.type];
           block.z = 5 - zindex;
           block.isEmpty = Math.random() > 0.7 //Number((Math.random() * 10).toFixed(0)) % 2 === 0;
           list.push(block);
         }
       }
     }
-    console.log("2222", list.length);
-    
     let filterList = list.filter((b) => !b.isEmpty);
     if(filterList.length % 3 != 0) {
       for (let index = 0; index < 3 - filterList.length % 3; index++) {
@@ -104,15 +102,23 @@ export default class Test extends Vue {
         list[firstIndex].isEmpty = false;
       }
     }
-    this.blockList = list.filter((b) => !b.isEmpty);
-    console.log(this.blockList.length);
-    
+
+    let blockArr = list.filter((b) => !b.isEmpty);
+    const groupNum = blockArr.length / 3;
+    const imgGroups = imgIndexList.splice(0, groupNum);
+    let imgs = [...imgGroups, ...imgGroups, ...imgGroups];
+    imgs = imgs.sort((a, b)=> { return Math.random() > 0.5 ? -1 : 1; });
+    blockArr.map((b, index) => {
+      b.type = imgs[index];
+      b.src = this.imgMap[b.type];
+    });
+    this.blockList = blockArr;
   }
 
   private handleClickBlock(block: any, index: number) {
     if(!this.isMark(block)) {
       this.blockList.splice(index, 1);
-      this.$emit("clickBlock", block);
+      this.$emit("clickBlock", block, this.blockList.length);
     }
     
   }

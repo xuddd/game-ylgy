@@ -1,43 +1,39 @@
 <template>
   <div class="home-index" ref="home">
-    <div class="content-bg-region">
-      <div v-for="(block,index) in bgList" :key="index" class="bg-block" :style="{bottom: getTop(block.rowIndex), left: getLeft(block.colIndex), zIndex: 0}">
-        <img :src="block.src"/>
-      </div>
+    <div class="header">
+      <h2>包子的🐑</h2>
     </div>
     <div class="home-content">
-      <div class="header">
-        <h2>包子的🐑</h2>
+      <BGRegion></BGRegion>
+      <div class="content-wrapper">
+        <template v-if="!isStarted">
+          <div class="start-box">
+            <div class="start-content">
+
+            </div>
+            <div class="start-bottom">
+              <el-button type="primary" size="medium" @click="handleStart">开始游戏</el-button>
+            </div>
+            
+          </div>
+        </template>
+        <template v-else>
+          <div class="content">
+            <BlockRegion @clickBlock="handleClickBlock"></BlockRegion>
+          </div>
+          <div class="region">
+            <Block v-for="(block,index) in bottomList"
+                    :key="index"
+                    :option="block"></Block>
+          </div>
+        </template>
       </div>
-      <template v-if="!isStarted">
-        <div class="start-box">
-          <el-button type="primary" size="medium" @click="handleStart">开始游戏</el-button>
-        </div>
-      </template>
-      <template v-else>
-        <div class="content">
-          <BlockRegion @clickBlock="handleClickBlock"></BlockRegion>
-        </div>
-        <div class="region">
-          <Block v-for="(block,index) in bottomList"
-                  :key="index"
-                  :option="block"></Block>
-        </div>
-        <!-- <div class="footer">
-          <span class="btn-block">
-            <i class="btn1"></i>
-          </span>
-          <span class="btn-block">
-            <i class="btn2"></i>
-          </span>
-          <span class="btn-block">
-            <i class="btn3"></i>
-          </span>
-        </div> -->
-      </template>
       <audio id="audio" v-show="false" controls muted loop autoplay src="@/assets/audio/BGM.flac">
       </audio>
-      <audio id="audio-notice" src="@/assets/audio/咚.wav" volume="1.0"></audio>
+      <audio id="audio-notice" v-show="false" src="@/assets/audio/咚.wav" volume="1.0"></audio>
+    </div>
+    <div class="home-footer">
+
     </div>
   </div>
 </template>
@@ -46,11 +42,13 @@
 import { Component, Vue } from "vue-property-decorator";
 import Block from "./Block.vue";
 import BlockRegion from "./BlockRegion.vue"
+import BGRegion from "./BGRegion.vue"
 import {BlockModel} from "@/model/BlockModel"
 @Component({
   components: {
     Block,
-    BlockRegion
+    BlockRegion,
+    BGRegion
   },
 })
 export default class Home extends Vue {
@@ -69,7 +67,7 @@ export default class Home extends Vue {
     audio.play();
   }
 
-  private handleClickBlock(block: any) {
+  private handleClickBlock(block: any, blockListCount: number) {
     this.noticeAudio();
     const oldBIndex = this.bottomList.findIndex(b => b.type === block.type);
     const lastIndex =  this.bottomList.lastIndexOf(block, oldBIndex);
@@ -78,8 +76,15 @@ export default class Home extends Vue {
       this.bottomList.splice(oldBIndex);
       this.bottomList.push(block);
       this.bottomList.push(...s);
+          
       if(s.length >= 2 && s[0].type === block.type && s[1].type === block.type) {
         this.bottomList.splice(oldBIndex, 3);
+        if(blockListCount === 0) {
+          this.$confirm("恭喜您已通关，点击确定返回首页", "",)
+          .then(() => {
+            this.isStarted = false;
+          });
+        }
       }
     } else {
       this.bottomList.push(block);
@@ -122,80 +127,81 @@ export default class Home extends Vue {
 <style lang="scss" scoped>
 .home-index {
   width: 100%;
-  max-width: 390px;
-  max-height: 844px;
   height: 100%;
+  max-height: 844px;
+  max-width: 390px;
   background: #ccff99;
-  border-radius: 8px;
   padding: 10px;
   overflow: hidden;
   position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  .content-bg-region {
-    position: relative;
-    margin-top: 20px;
-    height:80%;
-    width: 90%;
-    .bg-block {
-      position: absolute;
-      width: calc(15.2% - 23px);
-      height: 40px;
-      animation: ani 0.8s infinite;
-      img {
-        height: 100%;
-        width: 100%;
-      }
-    }
-  }
   .home-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: absolute;
-    height: 100%;
+    overflow: hidden;
     width: 100%;
     top: 0;
     left: 0;
-    .start-box {
+    position: relative;
+    .content-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
       display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      flex: 1;
-      padding-bottom: 30px;
-    }
-  
-    .header {
-    }
-    .content {
-      width: 350px;
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-      
-      .content-block-region {
-        position: absolute;
-        top: 0;
-        left: 0;
+      flex-direction: column;
+      align-items: center;
+      .start-box {
+        display: flex;
+        flex-direction: column;
         height: 100%;
         width: 100%;
+        .start-content {
+          height: 76%;
+        }
+        .start-bottom {
+          height: 24%;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
-      ul {
+      .content {
+        width: 350px;
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        
+        .content-block-region {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+        }
+        ul {
+          display: flex;
+          flex-wrap: wrap;
+          padding: 0;
+        }
+      }
+      .region {
+        width: 350px;
         display: flex;
-        flex-wrap: wrap;
-        padding: 0;
+        background: #965a1c;
+        border: 10px #c1812f solid;
+        height: 64px;
+        align-items: center;
+        padding: 0 1px;
+        border-radius: 5px;
+        margin-bottom: 10px;
       }
-    }
-    .region {
-      width: 350px;
-      display: flex;
-      background: #965a1c;
-      border: 10px #c1812f solid;
-      height: 64px;
-      align-items: center;
-      padding: 0 1px;
-      border-radius: 5px;
-      margin-bottom: 10px;
     }
     .footer {
       width: 350px;
@@ -236,24 +242,6 @@ export default class Home extends Vue {
       }
     }
   }
-  @keyframes ani {
-    0% {
-      height: 40px;
-    }
-
-    25% {
-      height: 36px;
-    }
-    50% {
-      height: 34px
-    }
-    75% {
-      height: 36px;
-    }
-    100% {
-      height: 40px;
-
-    }
-  }
+  
 }
 </style>
