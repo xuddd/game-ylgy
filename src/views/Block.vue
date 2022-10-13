@@ -1,8 +1,9 @@
 <!-- 页面注释 -->
 <template>
   <div class="block" @click="handleClick">
-    <img :src="option.src"/>
-    <!-- <span>{{option.z}}-{{option.colIndex}}-{{option.rowIndex}}</span> -->
+    <div class="block-inner">
+      <img :src="option.src"/>
+    </div>
     <div class="mark" v-if="isMark"></div>
   </div>
 </template>
@@ -43,6 +44,12 @@ export default class Block extends Vue {
 
   handleClick() {
     this.$emit("clickBlock");
+    // this.noticeAudio();
+  }
+
+  private noticeAudio() {
+    const audio: any = document.getElementById("audio-notice");
+    audio.play();
   }
   
 }
@@ -51,17 +58,25 @@ export default class Block extends Vue {
 <style lang="scss" scoped>
 .block {
   position: relative;
-  width: 36px;
-  height: 50px;
-  padding: 5px;
-  border: 2px solid black;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #666666;  
   border-radius: 4px;
-  background-color: whitesmoke;
+  background-color: #339900;
   cursor: pointer;
-  img {
-    width: 100%;
-    height: 100%;
+  .block-inner {
+    padding: 5px;
+    height: calc(100% - 14px);
+    border-radius: 4px;
+    background-color: white;
+    border-bottom: 1px solid #FFFFCC;
+    img {
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
   }
+  
   .mark {
     position: absolute;
     width: 100%;
@@ -69,17 +84,8 @@ export default class Block extends Vue {
     left: 0;
     top: 0;
     border-radius: 4px;
-    background-color: #0009;
+    background-color: rgba($color: #000000, $alpha: 0.4);
     pointer-events: none;
   }
-  // &::after {
-  //   content: "";
-  //   position: absolute;
-  //   bottom: -10px;
-  //   height: 10px;
-  //   width: 100%;
-  //   background: #CCFF99;
-  //   border-radius: 0 0 4px;
-  // }
 }
 </style>

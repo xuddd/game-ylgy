@@ -3,9 +3,9 @@ export class BlockModel {
 
   public src = "";
 
-  public x = 0;
+  public x: number | string = 0;
 
-  public y = 0;
+  public y: number | string = 0;
 
   public z = 0;
 

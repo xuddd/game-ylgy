@@ -4,7 +4,7 @@
     <div class="col"
          v-for="(block,index) in blockList"
          :key="index"
-         :style="{top: `${block.y}px`, left: `${block.x}px`, zIndex:block.z + 1}">
+         :style="{top: `${block.y}`, left: `${block.x}`, zIndex:block.z + 1, height: height+'px', width: width+'px'}">
       <Block :option="block"
              :isMark="isMark(block)"
              @clickBlock="handleClickBlock(block, index)"></Block>
@@ -16,6 +16,7 @@
 import { BlockModel } from "@/model/BlockModel";
 import Vue from "vue";
 import Component from "vue-class-component";
+import { Prop } from "vue-property-decorator";
 import Block from "./Block.vue";
 
 @Component({
@@ -24,6 +25,10 @@ import Block from "./Block.vue";
   },
 })
 export default class BlockRegion extends Vue {
+  @Prop()
+  width!: number;
+  @Prop()
+  height!: number;
   private blockList: BlockModel[] = [];
   private imgMap = [
     require("@/assets/images/block-0.jpg"),
@@ -38,15 +43,17 @@ export default class BlockRegion extends Vue {
     require("@/assets/images/block-9.jpg")
   ]
   mounted() {
-    this.getList();
+    setTimeout(() => {
+      this.getList();
+    },200);
   }
 
   private getTop(row: number, start: number) {
-    return row * 64 + start;
+    return `${row * this.height + start}px`;
   }
 
   private getLeft(col: number, start: number) {
-    return col * 50 + start;
+    return `${col * this.width + start}px`;
   }
 
   private isMark(block: BlockModel) {
@@ -77,9 +84,10 @@ export default class BlockRegion extends Vue {
     let list = [];
     const imgIndexList = this.getMock();
     let count = 0;
+    debugger
     for (let zindex = 0; zindex < 7; zindex++) {
-      let startTop = zindex * 35;
-      let startLeft = zindex * 30;
+      let startTop = zindex * (this.height / 2);
+      let startLeft = zindex * (this.width / 2);
       for (let row = 0; row < 8 - zindex; row++) {
         for (let col = 0; col < 7 - zindex; col++) {
           let block = new BlockModel();
@@ -128,6 +136,8 @@ export default class BlockRegion extends Vue {
 <style lang="scss" scoped>
 .block-region {
   position: relative;
+  width: 90%;
+  height: 95%;
   .col {
     position: absolute;
   }
