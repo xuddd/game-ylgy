@@ -111,7 +111,7 @@ export default class BlockRegion extends Vue {
   private handleClickBlock(block: any, index: number) {
     if(!this.isMark(block)) {
       this.blockList.splice(index, 1);
-      this.$emit("clickBlock", block, this.blockList.length);
+      this.$emit("clickBlock", block, this.blockList.length, "count2");
     }
     
   }

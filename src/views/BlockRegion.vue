@@ -84,7 +84,6 @@ export default class BlockRegion extends Vue {
     let list = [];
     const imgIndexList = this.getMock();
     let count = 0;
-    debugger
     for (let zindex = 0; zindex < 7; zindex++) {
       let startTop = zindex * (this.height / 2);
       let startLeft = zindex * (this.width / 2);
@@ -126,7 +125,7 @@ export default class BlockRegion extends Vue {
   private handleClickBlock(block: any, index: number) {
     if(!this.isMark(block)) {
       this.blockList.splice(index, 1);
-      this.$emit("clickBlock", block, this.blockList.length);
+      this.$emit("clickBlock", block, this.blockList.length, "count1");
     }
     
   }
