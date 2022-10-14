@@ -54,7 +54,7 @@ export default class BlockRegion extends Vue {
   }
 
   private getLeft(col: number) {
-    return col * 6;
+    return col * 6 + 5;
   }
 
   private isMark(block: BlockModel) {

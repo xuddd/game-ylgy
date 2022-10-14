@@ -2,7 +2,7 @@
   <div class="home-index" ref="home">
     <div class="header">
       <h2>ONE PIECE</h2>
-      <!-- <el-checkbox @change="handleMuted"></el-checkbox> -->
+      <!-- <el-switch v-model="isMuted" class=""></el-switch> -->
     </div>
     <div class="home-content">
       <BGRegion></BGRegion>
@@ -24,8 +24,8 @@
             <BlockRegion @clickBlock="handleClickBlock" :height="blockHeight" :width="blockWith"></BlockRegion>
           </div>
           <div class="content-bottom">
-            <BlockRegion2 style="w-50" @clickBlock="handleClickBlock" :height="blockHeight" :width="blockWith"></BlockRegion2>
-            <BlockRegion3 style="w-50" @clickBlock="handleClickBlock" :height="blockHeight" :width="blockWith"></BlockRegion3>
+            <BlockRegion2 class="w-50" @clickBlock="handleClickBlock" :height="blockHeight" :width="blockWith"></BlockRegion2>
+            <BlockRegion3 class="w-50" @clickBlock="handleClickBlock" :height="blockHeight" :width="blockWith"></BlockRegion3>
           </div>
           <div class="region">
             <Block v-for="(block,index) in bottomList"
@@ -34,13 +34,22 @@
           </div>
         </template>
       </div>
-      <audio id="audio" v-show="false" controls :muted="isMuted" loop autoplay :volume="0.7" src="@/assets/audio/BGM.mp3">
+      <audio id="audio" v-show="false" controls :muted="!isMuted" loop autoplay volume="0.1" src="@/assets/audio/BGM.mp3">
       </audio>
       <audio id="audio-notice" v-show="false" src="@/assets/audio/咚.wav" :volume="1.0"></audio>
     </div>
     <div class="home-footer">
 
     </div>
+    <!-- <Dialog v-if="isShowDialog">
+      <div class="finish-content">
+        <p class="fc-title">恭喜通关</p>
+        <div>
+          <el-button @click="handleBack">返回首页</el-button>
+          <el-button>重新开始</el-button>
+        </div>
+      </div>
+    </Dialog> -->
   </div>
 </template>
 
@@ -51,6 +60,7 @@ import BlockRegion from "./BlockRegion.vue"
 import BlockRegion2 from "./BlockRegion2.vue"
 import BlockRegion3 from "./BlockRegion3.vue"
 import BGRegion from "./BGRegion.vue"
+import Dialog from "./Dialog.vue"
 import {BlockModel} from "@/model/BlockModel"
 @Component({
   components: {
@@ -58,13 +68,16 @@ import {BlockModel} from "@/model/BlockModel"
     BlockRegion,
     BlockRegion2,
     BlockRegion3,
-    BGRegion
+    BGRegion,
+    Dialog
   },
 })
 export default class Home extends Vue {
   private bottomList: any[] = [];
   private bgList: any =  [];
   private isStarted = false;
+  private isShowDialog = false;
+  private isFinished = false;
   private isMuted = false;
   private countMap: Map<string, number> = new Map();
   blockWith = 0;
@@ -113,10 +126,11 @@ export default class Home extends Vue {
           }
         });
         if(isFinish) {
-          this.$confirm("恭喜您已通关，点击确定返回首页", "",)
-          .then(() => {
-            this.isStarted = false;
-          });
+          this.isShowDialog = true;
+          // this.$confirm("恭喜您已通关，点击确定返回首页", "",)
+          // .then(() => {
+          //   this.isStarted = false;
+          // });
         }
       }
     } else {
@@ -128,6 +142,10 @@ export default class Home extends Vue {
     }
   }
 
+  private handleBack() {
+    this.isStarted = false;
+    this.isShowDialog = false;
+  }
   private noticeAudio() {
     const audio: any = document.getElementById("audio-notice");
     audio.load();
@@ -284,6 +302,13 @@ export default class Home extends Vue {
       }
     }
   }
-  
+  .finish-content {
+    height: 200px;
+    width: 100%;
+    .fc-title {
+      font-size: 40px;
+      font-weight: bold;
+    }
+  }
 }
 </style>

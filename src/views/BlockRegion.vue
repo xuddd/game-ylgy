@@ -97,7 +97,7 @@ export default class BlockRegion extends Vue {
           // block.type = imgIndexList[count++];
           // block.src = this.imgMap[block.type];
           block.z = 5 - zindex;
-          block.isEmpty = Math.random() > 0.7 //Number((Math.random() * 10).toFixed(0)) % 2 === 0;
+          block.isEmpty = Math.random() > 0.6 //Number((Math.random() * 10).toFixed(0)) % 2 === 0;
           list.push(block);
         }
       }
