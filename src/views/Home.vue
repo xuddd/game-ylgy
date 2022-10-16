@@ -2,7 +2,7 @@
   <div class="home-index" ref="home">
     <div class="header">
       <h2>ONE PIECE</h2>
-      <!-- <el-switch v-model="isMuted" class=""></el-switch> -->
+      <i class="el-icon-setting config" @click="isShowConfig=true"></i>
     </div>
     <div class="home-content">
       <BGRegion></BGRegion>
@@ -34,13 +34,25 @@
           </div>
         </template>
       </div>
-      <audio id="audio" v-show="false" controls :muted="!isMuted" loop autoplay volume="0.1" src="@/assets/audio/BGM.mp3">
+      <audio id="audio-bgm" v-show="false" controls loop autoplay volume="0.1" src="@/assets/audio/BGM.mp3">
       </audio>
       <audio id="audio-notice" v-show="false" src="@/assets/audio/咚.wav" :volume="1.0"></audio>
     </div>
     <div class="home-footer">
 
     </div>
+    <Dialog v-if="isShowConfig" @close="isShowConfig=false">
+      <div class="config-content">
+        <el-form :model="config" label-width="50px">
+          <el-form-item label="音乐">
+            <el-switch v-model="config.bgm" @change="handleBGMChange"></el-switch>
+          </el-form-item>
+          <el-form-item label="音效">
+            <el-switch v-model="config.notice" @change="handleNoticeCHange"></el-switch>
+          </el-form-item>
+        </el-form>
+      </div>
+    </Dialog>
     <!-- <Dialog v-if="isShowDialog">
       <div class="finish-content">
         <p class="fc-title">恭喜通关</p>
@@ -77,8 +89,14 @@ export default class Home extends Vue {
   private bgList: any =  [];
   private isStarted = false;
   private isShowDialog = false;
+  private isShowConfig = false;
   private isFinished = false;
   private isMuted = false;
+
+  private config = {
+    bgm: true,
+    notice: true
+  }
   private countMap: Map<string, number> = new Map();
   blockWith = 0;
   blockHeight = 0
@@ -96,13 +114,13 @@ export default class Home extends Vue {
       this.blockWith = (this.$refs.cbr as any).offsetWidth * 0.9 / 7;
       this.blockHeight = (this.$refs.cbr as any).offsetHeight * 0.95 / 8;
     });
-    var audio: HTMLAudioElement = document.getElementById('audio') as HTMLAudioElement;
+    var audio: HTMLAudioElement = document.getElementById('audio-bgm') as HTMLAudioElement;
     audio.muted = false;
     audio.play();
   }
 
-  private handleMuted(isMuted: boolean) {
-    var audio: HTMLAudioElement = document.getElementById('audio') as HTMLAudioElement;
+  private handleMuted(id: string, isMuted: boolean) {
+    var audio: HTMLAudioElement = document.getElementById(id) as HTMLAudioElement;
     audio.muted = isMuted;
   }
 
@@ -173,6 +191,14 @@ export default class Home extends Vue {
     }
     this.bgList = list;
   }
+
+  private handleNoticeCHange() {
+    this.handleMuted("audio-notice", !this.config.notice);
+  }
+
+  private handleBGMChange() {
+    this.handleMuted("audio-bgm", !this.config.bgm);
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -188,6 +214,19 @@ export default class Home extends Vue {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  .header {
+    position: relative;
+    .config {
+      position: absolute;
+      right: 30px;
+      top: 26px;
+      font-size: 20px;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
   .home-content {
     flex: 1;
     display: flex;
@@ -309,6 +348,13 @@ export default class Home extends Vue {
       font-size: 40px;
       font-weight: bold;
     }
+  }
+  .config-content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
   }
 }
 </style>
