@@ -27,6 +27,7 @@ body {
   padding: 0;
   margin: 0;
   overflow: hidden;
+  border: none;
 }
 #nav {
   padding: 30px;

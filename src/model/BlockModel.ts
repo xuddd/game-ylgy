@@ -1,4 +1,12 @@
+import { Common } from "@/utils/Common";
 export class BlockModel {
+  /**
+   *
+   */
+  constructor() {
+    this.id = Common.getNewGuid();
+  }
+  public id = "";
   public type = 0;
 
   public src = "";

@@ -2,7 +2,7 @@
 <template>
   <div class="dialog">
     <div class="dialog-content">
-      <i class="el-icon-circle-close config-close" @click="handleClose"></i>
+      <i class="el-icon-circle-close config-close" @click="handleClose" v-if="dialogConfig.isShowClose"></i>
       <slot></slot>
     </div>
   </div>
@@ -17,6 +17,15 @@ import { Prop } from "vue-property-decorator";
 components: {}
 })
 export default class Dialog extends Vue {
+  @Prop({
+    type: Object,
+    default: () => {
+      return {
+        isShowClose: true
+      }
+    }
+  }) 
+  dialogConfig!: any;
   handleClose() {
     this.$emit("close");
   }

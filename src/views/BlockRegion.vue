@@ -3,7 +3,7 @@
   <div class="block-region">
     <div class="col"
          v-for="(block,index) in blockList"
-         :key="index"
+         :key="block.id"
          :style="{top: `${block.y}`, left: `${block.x}`, zIndex:block.z + 1, height: height+'px', width: width+'px'}">
       <Block :option="block"
              :isMark="isMark(block)"
@@ -18,30 +18,19 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import Block from "./Block.vue";
+import BaseBlockRegion from "./BaseBlockRegion"
 
 @Component({
   components: {
-    Block,
+    Block
   },
+  // mixins: [BlockRegionMixin]
 })
-export default class BlockRegion extends Vue {
+export default class BlockRegion extends BaseBlockRegion {
   @Prop()
   width!: number;
   @Prop()
   height!: number;
-  private blockList: BlockModel[] = [];
-  private imgMap = [
-    require("@/assets/images/block-0.jpg"),
-    require("@/assets/images/block-1.jpg"),
-    require("@/assets/images/block-2.jpg"),
-    require("@/assets/images/block-3.jpg"),
-    require("@/assets/images/block-4.jpg"),
-    require("@/assets/images/block-5.jpg"),
-    require("@/assets/images/block-6.jpg"),
-    require("@/assets/images/block-7.jpg"),
-    require("@/assets/images/block-8.jpg"),
-    require("@/assets/images/block-9.jpg")
-  ]
   mounted() {
     setTimeout(() => {
       this.getList();
@@ -125,9 +114,8 @@ export default class BlockRegion extends Vue {
   private handleClickBlock(block: any, index: number) {
     if(!this.isMark(block)) {
       this.blockList.splice(index, 1);
-      this.$emit("clickBlock", block, this.blockList.length, "count1");
+      this.$emit("clickBlock", block, this.blockList.length, "blockregion1");
     }
-    
   }
 }
 </script>
